@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "tickets", schema = "public")
 public class Ticket {
 
     @Id
@@ -27,7 +27,6 @@ public class Ticket {
     @Column(name = "paid")
     private Boolean paid = false;
 
-    // Getteri i setteri
     public Long getId() { return id; }
     public UUID getTicketUuid() { return ticketUuid; }
     public LocalDateTime getEntryTime() { return entryTime; }

@@ -4,7 +4,10 @@ import com.smartparking.smart_parking.model.Ticket;
 import com.smartparking.smart_parking.repository.TicketRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/tickets")
@@ -16,30 +19,44 @@ public class TicketController {
         this.ticketRepository = ticketRepository;
     }
 
+    //generiranje karte za ulaz
+    @PostMapping("/entry")
+    public Ticket createTicket() {
+        Ticket ticket = new Ticket(); // UUID i entryTime auto
+        return ticketRepository.save(ticket);
+    }
+
+    // izlazak i cijena
+    @PutMapping("/exit/{uuid}")
+    public Ticket exitParking(@PathVariable UUID uuid) {
+        Ticket ticket = ticketRepository.findByTicketUuid(uuid)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        if (ticket.getExitTime() != null) {
+            throw new RuntimeException("Ticket already used");
+        }
+
+        ticket.setExitTime(LocalDateTime.now());
+
+        //cijena
+        long hours = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toHours();
+        if (hours == 0) hours = 1;
+        ticket.setPrice(hours * 5.0);
+
+        ticket.setPaid(true); //placeno
+        return ticketRepository.save(ticket);
+    }
+
+    //dohvat svih karata(admin)
     @GetMapping
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public Ticket getTicket(@PathVariable Long id) {
-        return ticketRepository.findById(id).orElse(null);
-    }
-
-    @PostMapping
-    public Ticket createTicket(@RequestBody Ticket ticket) {
-        return ticketRepository.save(ticket);
-    }
-
-    @PutMapping("/{id}/pay")
-    public Ticket payTicket(@PathVariable Long id) {
-        Ticket ticket = ticketRepository.findById(id).orElseThrow();
-        ticket.setPaid(true);
-        return ticketRepository.save(ticket);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteTicket(@PathVariable Long id) {
-        ticketRepository.deleteById(id);
+    //dohvat karte po UUID
+    @GetMapping("/{uuid}")
+    public Ticket getTicketByUuid(@PathVariable UUID uuid) {
+        return ticketRepository.findByTicketUuid(uuid)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
     }
 }
