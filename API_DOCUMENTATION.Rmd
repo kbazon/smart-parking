@@ -1,0 +1,124 @@
+
+
+```markdown
+# Smart Parking API Documentation
+
+Dokument opisuje REST API za upravljanje parkirnim kartama u pametnom sustavu parkiranja.
+
+---
+
+## Base URL
+
+```
+
+[http://localhost:8080](http://localhost:8080)
+
+````
+
+---
+
+## Endpoints
+
+### 1. Generiranje karte pri ulazu
+
+- **URL:** `/tickets/entry`
+- **Method:** `POST`
+- **Request Body:** Nema potrebe, UUID i vrijeme ulaska se generiraju automatski.
+- **Response:**
+
+```json
+{
+  "id": 1,
+  "ticketUuid": "00a714cf-3a0c-4617-8654-f7089b417938",
+  "entryTime": "2026-01-02T16:19:44.70751",
+  "exitTime": null,
+  "price": null,
+  "paid": false
+}
+````
+
+---
+
+### 2. Validacija karte pri izlazu i izračun cijene
+
+* **URL:** `/tickets/exit/{uuid}`
+* **Method:** `PUT`
+* **Path Parameter:**
+
+  * `uuid` - UUID karte koju korisnik koristi pri izlazu.
+* **Response:**
+
+```json
+{
+  "id": 1,
+  "ticketUuid": "00a714cf-3a0c-4617-8654-f7089b417938",
+  "entryTime": "2026-01-02T16:19:44.70751",
+  "exitTime": "2026-01-02T16:22:55.2878954",
+  "price": 5.0,
+  "paid": true
+}
+```
+
+* **Notes:** Cijena se računa prema trajanju parkiranja (1 sat minimalno), po stopi od 5.0 kn/sat.
+
+---
+
+### 3. Dohvat svih karata (admin)
+
+* **URL:** `/tickets`
+* **Method:** `GET`
+* **Response:**
+
+```json
+[
+  {
+    "id": 1,
+    "ticketUuid": "00a714cf-3a0c-4617-8654-f7089b417938",
+    "entryTime": "2026-01-02T16:19:44.70751",
+    "exitTime": "2026-01-02T16:22:55.2878954",
+    "price": 5.0,
+    "paid": true
+  },
+  ...
+]
+```
+
+---
+
+### 4. Dohvat karte po UUID
+
+* **URL:** `/tickets/{uuid}`
+* **Method:** `GET`
+* **Path Parameter:**
+
+  * `uuid` - UUID karte.
+* **Response:**
+
+```json
+{
+  "id": 1,
+  "ticketUuid": "00a714cf-3a0c-4617-8654-f7089b417938",
+  "entryTime": "2026-01-02T16:19:44.70751",
+  "exitTime": "2026-01-02T16:22:55.2878954",
+  "price": 5.0,
+  "paid": true
+}
+```
+
+---
+
+## Error Handling
+
+* **Ticket not found:** 404 Not Found
+* **Ticket already used:** 400 Bad Request
+* **Invalid UUID format:** 400 Bad Request
+
+---
+
+## Notes
+
+* Svi datumi i vremena koriste `ISO 8601` format.
+* `UUID` se generira automatski pri kreiranju karte.
+* Cijena se izračunava automatski pri izlasku iz parkirališta.
+
+
