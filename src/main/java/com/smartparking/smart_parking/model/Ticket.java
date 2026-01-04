@@ -24,9 +24,11 @@ public class Ticket {
     @Column(name = "price")
     private Double price;
 
+
     @Column(name = "paid")
     private Boolean paid = false;
 
+ //getteri i setteri
     public Long getId() { return id; }
     public UUID getTicketUuid() { return ticketUuid; }
     public LocalDateTime getEntryTime() { return entryTime; }
@@ -37,4 +39,6 @@ public class Ticket {
     public void setExitTime(LocalDateTime exitTime) { this.exitTime = exitTime; }
     public void setPrice(Double price) { this.price = price; }
     public void setPaid(Boolean paid) { this.paid = paid; }
+
+
 }

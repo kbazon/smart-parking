@@ -33,3 +33,5 @@ build/
 .vscode/
 # Ignore all HTML files
 *.html
+*.RData
+*.Rhistory

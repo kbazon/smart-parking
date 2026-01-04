@@ -3,6 +3,8 @@ package com.smartparking.smart_parking.controller;
 import com.smartparking.smart_parking.model.Ticket;
 import com.smartparking.smart_parking.repository.TicketRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,37 +39,51 @@ public class TicketController {
         return saved;
     }
 
-    // izlazak i cijena
-    @PutMapping("/exit/{uuid}")
-    public Ticket exitParking(@PathVariable UUID uuid) {
+    //izlaz i cijena
+    @PutMapping("/exit/{uuidStr}")
+    public Ticket exitParking(@PathVariable String uuidStr) {
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(uuidStr);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Neispravan UUID");
+        }
+
         Ticket ticket = ticketRepository.findByTicketUuid(uuid)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Karta nije pronađena"));
 
         if (ticket.getExitTime() != null) {
-            throw new RuntimeException("Ticket already used");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Karta je već iskorištena");
         }
 
         ticket.setExitTime(LocalDateTime.now());
 
-        //cijena
+        //izracun cijene
         long hours = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toHours();
         if (hours == 0) hours = 1;
         ticket.setPrice(hours * 5.0);
 
-        ticket.setPaid(true); //placeno
+        ticket.setPaid(true); // placeno
         return ticketRepository.save(ticket);
     }
 
-    //dohvat svih karata(admin)
+    //dohvat svih karata (admin)
     @GetMapping
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
 
     //dohvat karte po UUID
-    @GetMapping("/{uuid}")
-    public Ticket getTicketByUuid(@PathVariable UUID uuid) {
+    @GetMapping("/{uuidStr}")
+    public Ticket getTicketByUuid(@PathVariable String uuidStr) {
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(uuidStr);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Neispravan UUID");
+        }
+
         return ticketRepository.findByTicketUuid(uuid)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Karta nije pronađena"));
     }
 }
