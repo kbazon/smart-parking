@@ -9,9 +9,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
+
+    private static final Logger log = LoggerFactory.getLogger(TicketController.class);
 
     private final TicketRepository ticketRepository;
 
@@ -21,9 +27,14 @@ public class TicketController {
 
     //generiranje karte za ulaz
     @PostMapping("/entry")
-    public Ticket createTicket() {
+    public Ticket createTicket(HttpServletRequest request) {
         Ticket ticket = new Ticket(); // UUID i entryTime auto
-        return ticketRepository.save(ticket);
+        Ticket saved = ticketRepository.save(ticket);
+
+        // log za load balancer
+        log.info("Handled by port: {}", request.getLocalPort());
+
+        return saved;
     }
 
     // izlazak i cijena
