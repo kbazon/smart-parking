@@ -4,7 +4,18 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# Maven
+/target/
+
+# Docker volumes (runtime data)
+/docker/primary_data/
+/docker/replica_data/
+
+# Logs & env
+*.log
+.env
+
+# Spring / STS
 .apt_generated
 .classpath
 .factorypath
@@ -19,6 +30,9 @@ target/
 *.iml
 *.ipr
 
+### VS Code ###
+.vscode/
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -26,12 +40,5 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
-.vscode/
-# Ignore all HTML files
-*.html
-*.RData
-*.Rhistory
+

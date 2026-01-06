@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Parking System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { margin-top: 30px; }
+        input, button { padding: 5px; margin: 5px; }
+        #output { margin-top: 20px; white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background: #f9f9f9; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Smart Parking System</h1>
+
+    <h2>Ulaz u parking</h2>
+    <button onclick="generateTicket()">Generiraj kartu</button>
+    <div>UUID generirane karte: <span id="generatedUuid">-</span></div>
+
+    <h2>Izlaz iz parkinga</h2>
+    <input type="text" id="exitUuid" placeholder="UUID karte za izlazak">
+    <button onclick="exitParking()">Izlaz</button>
+
+    <h2>Dohvat svih karata (admin)</h2>
+    <button onclick="getAllTickets()">Dohvati sve karte</button>
+
+    <h2>Dohvat karte po UUID-u</h2>
+    <input type="text" id="searchUuid" placeholder="UUID karte">
+    <button onclick="getTicketByUuid()">Dohvati kartu</button>
+
+    <h2>Rezultati</h2>
+    <div id="output">Prikaz rezultata</div>
+
+    <script src="app.js"></script>
+</body>
+</html>

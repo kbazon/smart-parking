@@ -1,0 +1,50 @@
+services:
+  postgres_primary:
+    image: postgres:17
+    container_name: postgres_primary
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: smart_parking
+      POSTGRES_USER: parking_user
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - primary_data:/var/lib/postgresql/data
+      - ./conf/primary/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./conf/primary/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+
+  postgres_replica:
+    image: postgres:17
+    container_name: postgres_replica
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      PGPASSWORD: replica_pass
+    volumes:
+      - replica_data:/var/lib/postgresql/data
+      - ./conf/replica/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./conf/replica/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    depends_on:
+      - postgres_primary
+    command: >
+      bash -c "
+        chown -R postgres:postgres /var/lib/postgresql/data && chmod 0700 /var/lib/postgresql/data;
+        if [ ! -f /var/lib/postgresql/data/PG_VERSION ]; then
+          echo 'Initializing replica from primary...';
+          rm -rf /var/lib/postgresql/data/* || true;
+          gosu postgres pg_basebackup -h postgres_primary -D /var/lib/postgresql/data -U replica_user -v -P --wal-method=stream;
+          touch /var/lib/postgresql/data/standby.signal;
+        fi;
+        exec gosu postgres postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
+      "
+
+volumes:
+  primary_data:
+  replica_data:
