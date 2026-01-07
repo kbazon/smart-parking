@@ -1,6 +1,7 @@
 const apiBase = "http://localhost:8080/tickets";
 const output = document.getElementById("output");
 
+console.log("APP.JS LOADED v1");
 //za prikaz rezultata
 function showResult(text) {
     output.textContent = text;
@@ -26,9 +27,11 @@ async function generateTicket() {
         document.getElementById("generatedUuid").textContent = ticket.ticketUuid;
         document.getElementById("exitUuid").value = ticket.ticketUuid;
         showResult(`Karta generirana.\nUUID: ${ticket.ticketUuid}\nUlaz: ${ticket.entryTime}`);
+		await refreshAvailability();
     } catch (err) {
         console.error(err);
         showResult("Greška: " + err.message);
+		
     }
 }
 
@@ -49,6 +52,7 @@ async function exitParking() {
 
         const ticket = await response.json();
         showResult(`Izlaz uspješan.\nUUID: ${ticket.ticketUuid}\nUlaz: ${ticket.entryTime}\nIzlaz: ${ticket.exitTime}\nCijena: ${ticket.price}\nPlaćeno: ${ticket.paid}`);
+		await refreshAvailability();
     } catch (err) {
         console.error(err);
         showResult("Greška: " + err.message);
@@ -99,3 +103,18 @@ async function getTicketByUuid() {
         showResult("Greška: " + err.message);
     }
 }
+
+async function refreshAvailability() {
+  console.log("refreshAvailability called");
+  const res = await fetch("/availability/total");
+  console.log("status", res.status);
+  const data = await res.json();
+  console.log("data", data);
+
+  document.getElementById("free").textContent = data.free;
+  document.getElementById("capacity").textContent = data.capacity;
+  document.getElementById("occupied").textContent = data.occupied;
+}
+
+refreshAvailability();
+setInterval(refreshAvailability, 1000);
