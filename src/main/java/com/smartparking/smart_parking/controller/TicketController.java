@@ -25,6 +25,7 @@ public class TicketController {
 
     private final TicketRepository ticketRepository;
     private final ParkingEventPublisher eventPublisher; 
+    private static final double PRICE_PER_HOUR_EUR = 2.0;
 
     public TicketController(TicketRepository ticketRepository, ParkingEventPublisher eventPublisher) {
         this.ticketRepository = ticketRepository;
@@ -64,12 +65,14 @@ public class TicketController {
         }
 
         ticket.setExitTime(LocalDateTime.now());
-
-        //izracun cijene
+        
+        
+     // Izračun cijene
         long hours = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toHours();
         if (hours == 0) hours = 1;
-        ticket.setPrice(hours * 5.0);
-        ticket.setPaid(true); // placeno
+        ticket.setPrice(hours * PRICE_PER_HOUR_EUR);
+        ticket.setCurrency("EUR");  // Dodaj valutu
+        ticket.setPaid(true);
         
         Ticket saved = ticketRepository.save(ticket);
         log.info("Karta izašla: {} | Cijena: {}", saved.getTicketUuid(), saved.getPrice());

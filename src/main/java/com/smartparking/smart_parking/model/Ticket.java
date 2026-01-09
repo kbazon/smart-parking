@@ -24,9 +24,11 @@ public class Ticket {
     @Column(name = "price")
     private Double price;
 
-
     @Column(name = "paid")
     private Boolean paid = false;
+    
+    @Column(name = "currency")
+    private String currency = "EUR";
 
  //getteri i setteri
     public Long getId() { return id; }
@@ -35,6 +37,8 @@ public class Ticket {
     public LocalDateTime getExitTime() { return exitTime; }
     public Double getPrice() { return price; }
     public Boolean getPaid() { return paid; }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
 
     public void setExitTime(LocalDateTime exitTime) { this.exitTime = exitTime; }
     public void setPrice(Double price) { this.price = price; }
