@@ -12,9 +12,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: smart_parking
-      POSTGRES_USER: parking_user
-      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - primary_data:/var/lib/postgresql/data
       - ./conf/primary/postgresql.conf:/etc/postgresql/postgresql.conf
@@ -32,7 +32,7 @@ services:
     ports:
       - "5433:5432"
     environment:
-      PGPASSWORD: replica_pass
+      PGPASSWORD: ${REPLICA_PASSWORD}
     volumes:
       - replica_data:/var/lib/postgresql/data
       - ./conf/replica/postgresql.conf:/etc/postgresql/postgresql.conf
