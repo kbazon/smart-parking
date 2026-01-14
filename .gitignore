@@ -13,6 +13,7 @@ target/
 
 # Logs & env
 *.log
+/docker/.env
 .env
 
 # Spring / STS
