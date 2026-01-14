@@ -1,6 +1,7 @@
 package com.smartparking.smart_parking.config;
 
 import com.smartparking.smart_parking.service.ParkingEventConsumer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,11 +18,13 @@ public class RedisPubSubConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "parking.consumer.enabled", havingValue = "true")
     MessageListenerAdapter parkingEventsListener(ParkingEventConsumer consumer) {
         return new MessageListenerAdapter(consumer, "handleMessage");
     }
 
     @Bean
+    @ConditionalOnProperty(name = "parking.consumer.enabled", havingValue = "true")
     RedisMessageListenerContainer redisContainer(
             RedisConnectionFactory connectionFactory,
             MessageListenerAdapter parkingEventsListener,

@@ -1,12 +1,14 @@
 package com.smartparking.smart_parking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+@ConditionalOnProperty(name = "parking.consumer.enabled", havingValue = "true")
 @Service
 public class ParkingEventConsumer {
 
