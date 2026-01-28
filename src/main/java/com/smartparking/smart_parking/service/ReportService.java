@@ -55,7 +55,7 @@ public class ReportService {
             peakHour = 0;
         }
 
-        // Average duration
+        // prosjecno trajanje
         Query qAvgDuration = em.createNativeQuery(
             "SELECT AVG(EXTRACT(EPOCH FROM (exit_time - entry_time))/3600) " +
             "FROM tickets WHERE exit_time IS NOT NULL AND entry_time::date BETWEEN :start AND :end"
@@ -65,7 +65,7 @@ public class ReportService {
         Double avgDuration = ((Number) qAvgDuration.getSingleResult() != null) ? 
                              ((Number) qAvgDuration.getSingleResult()).doubleValue() : 0.0;
 
-        // Revenue
+        //prihod
         Query qRevenue = em.createNativeQuery(
             "SELECT COALESCE(SUM(price),0) FROM tickets WHERE entry_time::date BETWEEN :start AND :end"
         );
@@ -73,7 +73,7 @@ public class ReportService {
         qRevenue.setParameter("end", endDate);
         Double revenue = ((Number) qRevenue.getSingleResult()).doubleValue();
 
-        // Occupancy rate (Redis)
+        // stopa popunjenosti (Redis)
         String capacityStr = redis.opsForValue().get("capacity:total");
         int capacity = capacityStr != null ? Integer.parseInt(capacityStr) : 100;
 

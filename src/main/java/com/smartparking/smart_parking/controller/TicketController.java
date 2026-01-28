@@ -53,7 +53,6 @@ public class TicketController {
         	log.warn("Nevažeći UUID pokušan za izlaz: {}", uuidStr);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Neispravan UUID");
         }
-
         Ticket ticket = ticketRepository.findByTicketUuid(uuid)
                 .orElseThrow(() -> {log.warn("Karta za UUID nije pronađena: {}", uuidStr);
                 return new ResponseStatusException(HttpStatus.NOT_FOUND, "Karta nije pronađena");

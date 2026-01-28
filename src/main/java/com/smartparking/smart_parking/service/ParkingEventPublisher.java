@@ -23,7 +23,7 @@ public class ParkingEventPublisher {
     }
 
     public void publishEvent(String type, Ticket ticket) {
-        // stari stub log (ostaje)
+       
         log.info("Event published: {} | Ticket UUID: {}", type, ticket.getTicketUuid());
 
         // novi dio: publish u Redis kanal
