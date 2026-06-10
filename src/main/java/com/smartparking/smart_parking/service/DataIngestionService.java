@@ -20,10 +20,6 @@ import java.util.List;
  *       └─► FeaturePreprocessorService   (compute lag features)
  *               └─► PredictionClient     (POST /predict to ml-service)
  *                       └─► Redis        (store result for API reads)
- *
- * Runs every 15 minutes for all known parking lots.
- * Also exposes runNow() for on-demand refresh triggered by ParkingController.
- * The output is a next-hour high-occupancy forecast, not the current occupancy value.
  */
 @Service
 @EnableScheduling
@@ -39,7 +35,6 @@ public class DataIngestionService {
     private final JdbcTemplate               jdbc;
     private final RedisTemplate<String, Object> redis;
 
-    // Hardcoded holiday check — replace with a DB table or external API if needed
     // Format: MM-DD
     private static final List<String> HOLIDAY_MONTH_DAYS = List.of(
             "01-01", "01-06", "05-01", "05-30", "06-22", "08-05",
@@ -57,20 +52,14 @@ public class DataIngestionService {
         this.redis            = redis;
     }
 
-    /**
-     * Runs automatically every 15 minutes.
-     * cron = "0 0/15 * * * *"  → seconds minutes hours ...
-     */
+    
     @Scheduled(cron = "0 0/15 * * * *")
     public void runScheduled() {
         log.info("DataIngestionService: scheduled pipeline started");
         runForAllLots();
     }
 
-    /**
-     * Called by ParkingController for on-demand refresh.
-     *The output is a next-hour high-occupancy forecast, not the current occupancy value.
-     */
+    
     public OccupancyResponse runNow(String lotId) {
         boolean holiday = isTodayHoliday();
         PredictionRequest req = preprocessor.buildForLot(lotId, holiday);

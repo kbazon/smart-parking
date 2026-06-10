@@ -1,20 +1,4 @@
-"""
-feature_builder.py
 
-Single source of truth for constructing the pandas DataFrame that the
-sklearn Pipeline consumes. Column names here must EXACTLY match what
-was passed to model.fit(X_train) during training.
-
-Run this once to verify your saved Pipeline agrees with these names:
-
-    import joblib
-    m = joblib.load("parking_xgboost_model_no_event.joblib")
-    ct = m.named_steps['preprocessor']          # adjust key if yours differs
-    for name, transformer, cols in ct.transformers_:
-        print(name, cols)
-
-The output of that print is the contract. This file must mirror it.
-"""
 
 import pandas as pd
 

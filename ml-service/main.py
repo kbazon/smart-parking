@@ -21,14 +21,7 @@ log = logging.getLogger("ml-service")
 # ── Config ────────────────────────────────────────────────────────────────────
 MODEL_DIR    = os.getenv("MODEL_DIR", "/app/models")
 ACTIVE_MODEL = "xgboost"
-# ── Load XGBoost Pipeline once at startup ─────────────────────────────────────# Each .joblib file is a full sklearn Pipeline:
-#   Pipeline([
-#       ("preprocessor", ColumnTransformer([
-#           ("ohe",         OneHotEncoder(...), ["day_of_week"]),
-#           ("passthrough", "passthrough",      [...numeric cols...]),
-#       ])),
-#       ("classifier", XGBClassifier(...)),   # or LogisticRegression / RF
-#   ])
+
 MODEL_FILES = {
     "xgboost": "parking_xgboost_model_no_event.joblib",
 }

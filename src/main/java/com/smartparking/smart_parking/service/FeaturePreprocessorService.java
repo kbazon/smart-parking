@@ -7,13 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
-/**
- * Builds the current feature vector used by the ML model.
- * The model uses these current and lag features to predict
- * whether LOT_A will reach high occupancy in the next hour.
- *
- * Must match ML training feature contract exactly.
- */
+
 @Service
 public class FeaturePreprocessorService {
 	private static final int DEFAULT_CAPACITY = 200;

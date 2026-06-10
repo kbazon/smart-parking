@@ -20,11 +20,6 @@ class PredictRequest(BaseModel):
 		description="e.g. 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'"
 	)
 
-    # ── Categorical feature (OHE inside Pipeline) ────────────────────────────
-    # VERIFY: open your training script and check whether X_train["day_of_week"]
-    # contained strings ("Monday") or integers (0). Match that exactly here.
-    # Default assumption: string day names from pd.Timestamp.day_name()
-
 
 class PredictResponse(BaseModel):
     prediction: int
