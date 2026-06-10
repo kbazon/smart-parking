@@ -1,15 +1,394 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-section {
-    margin-bottom: 30px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    width: 400px;
+:root {
+    --bg: #0f172a;
+    --panel: #111827;
+    --panel-soft: #162033;
+    --border: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --blue: #3b82f6;
+    --blue-strong: #2563eb;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
 }
+
+body {
+    min-height: 100vh;
+    font-family: Inter, Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 30%),
+        var(--bg);
+    color: var(--text);
+}
+
+.layout {
+    min-height: 100vh;
+    width: 100%;
+}
+
+.main-content {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 48px 0 56px;
+}
+
+/* HEADER */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 34px;
+    padding: 28px;
+    background: rgba(17, 24, 39, 0.78);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(10px);
+}
+
+.topbar h1 {
+    font-size: 34px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    letter-spacing: -0.04em;
+}
+
+.topbar p {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.refresh-info {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* BUTTONS */
 
 button {
-    margin-top: 10px;
+    background: linear-gradient(135deg, var(--blue-strong), var(--blue));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 12px 26px rgba(37, 99, 235, 0.26);
+    transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px rgba(37, 99, 235, 0.34);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* SECTIONS */
+
+section {
+    margin-bottom: 34px;
+}
+
+.section-title {
+    margin-bottom: 16px;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+}
+
+/* FORECAST EVENTS */
+
+.forecast-events-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+    gap: 22px;
+    align-items: stretch;
+    margin-bottom: 40px;
+}
+
+.dashboard-panel {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+        var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.forecast-panel {
+    min-width: 0;
+}
+
+.events-panel {
+    min-width: 0;
+}
+
+.forecast-panel .section-title,
+.events-panel .section-title {
+    margin-bottom: 18px;
+}
+
+/* OVERVIEW */
+
+.overview-grid {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto 40px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    justify-content: center;
+}
+
+.overview-card {
+    min-height: 132px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+        var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.overview-card span {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.overview-card h2 {
+    margin-top: 18px;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.status-card h2 {
+    font-size: 30px;
+    color: #bfdbfe;
+}
+
+/* LOT FORECAST CARD */
+
+.lot-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.lot-card,
+.service-card,
+.log-box {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+        var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.lot-card h3 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    letter-spacing: -0.03em;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.metric:last-of-type {
+    border-bottom: none;
+}
+
+.metric span:first-child {
+    color: var(--muted);
+}
+
+.metric span:last-child {
+    text-align: right;
+    font-weight: 700;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    margin-top: 22px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    transition: width 0.35s ease;
+}
+
+.high {
+    color: var(--red);
+    font-weight: 800;
+}
+
+.normal {
+    color: var(--green);
+    font-weight: 800;
+}
+
+/* MANUAL EVENTS */
+
+.sim-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.sim-controls button {
+    width: 100%;
+}
+
+.log-box {
+    margin-top: 18px;
+    min-height: 130px;
+    max-height: 210px;
+    overflow-y: auto;
+}
+
+.compact-log {
+    min-height: 170px;
+    max-height: 260px;
+}
+
+.log-entry {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    color: #cbd5e1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 14px;
+}
+
+/* SYSTEM STATUS */
+
+.services-section {
+    margin-top: 42px;
+    padding-top: 8px;
+}
+
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 18px;
+}
+
+.service-card span {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.status-pill {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.14);
+    color: var(--green);
+    border: 1px solid rgba(34, 197, 94, 0.24);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .forecast-events-section {
+        grid-template-columns: 1fr;
+    }
+
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .main-content {
+        width: min(100% - 28px, 1180px);
+        padding: 28px 0 40px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 22px;
+        border-radius: 20px;
+    }
+
+    .topbar h1 {
+        font-size: 28px;
+    }
+
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lot-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-panel {
+    padding: 20px;
+    border-radius: 20px;
+    }
+    
+    .sim-controls {
+    grid-template-columns: 1fr;
+    }
+
+    .metric {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .metric span:last-child {
+        text-align: left;
+    }
 }

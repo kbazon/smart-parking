@@ -1,3 +1,4 @@
+
 services:
   redis:
     image: redis:7-alpine
@@ -51,11 +52,33 @@ services:
         exec gosu postgres postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
       "
 
+  ml-service:
+    build:
+      context: ../ml-service
+      dockerfile: Dockerfile
+    container_name: ml-service
+    restart: unless-stopped
+    environment:
+      ACTIVE_MODEL: xgboost
+      MODEL_DIR: /app/models
+    volumes:
+      - ../ml-service/models:/app/models:ro
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+
   app1:
     build: ..
     container_name: smart_parking_app1
     environment:
       PARKING_CONSUMER_ENABLED: "true"
+      ML_SERVICE_URL: http://ml-service:8000
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
@@ -63,14 +86,19 @@ services:
       SPRING_DATA_REDIS_PORT: ${SPRING_DATA_REDIS_PORT}
       SERVER_PORT: 8080
     depends_on:
-      - postgres_primary
-      - redis
+      postgres_primary:
+        condition: service_started
+      redis:
+        condition: service_started
+      ml-service:
+        condition: service_healthy
 
   app2:
     build: ..
     container_name: smart_parking_app2
     environment:
       PARKING_CONSUMER_ENABLED: "false"
+      ML_SERVICE_URL: http://ml-service:8000
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
@@ -78,8 +106,12 @@ services:
       SPRING_DATA_REDIS_PORT: ${SPRING_DATA_REDIS_PORT}
       SERVER_PORT: 8080
     depends_on:
-      - postgres_primary
-      - redis
+      postgres_primary:
+        condition: service_started
+      redis:
+        condition: service_started
+      ml-service:
+        condition: service_healthy
 
   nginx:
     image: nginx:alpine

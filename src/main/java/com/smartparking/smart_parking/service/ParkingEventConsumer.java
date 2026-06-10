@@ -1,8 +1,8 @@
 package com.smartparking.smart_parking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,10 +15,15 @@ public class ParkingEventConsumer {
     private static final Logger log = LoggerFactory.getLogger(ParkingEventConsumer.class);
 
     private final StringRedisTemplate redis;
+    private final OccupancyLoggingService occupancyLoggingService;
     private final ObjectMapper om = new ObjectMapper();
 
-    public ParkingEventConsumer(StringRedisTemplate redis) {
+    public ParkingEventConsumer(
+            StringRedisTemplate redis,
+            OccupancyLoggingService occupancyLoggingService
+    ) {
         this.redis = redis;
+        this.occupancyLoggingService = occupancyLoggingService;
     }
 
     public void handleMessage(String message) {
@@ -40,11 +45,19 @@ public class ParkingEventConsumer {
                 return;
             }
 
-            if (newFree == null) return;
+            if (newFree == null) {
+                return;
+            }
 
-            // clamp
-            if (newFree < 0) redis.opsForValue().set(freeKey, "0");
-            if (newFree > capacity) redis.opsForValue().set(freeKey, String.valueOf(capacity));
+            if (newFree < 0) {
+                redis.opsForValue().set(freeKey, "0");
+            }
+
+            if (newFree > capacity) {
+                redis.opsForValue().set(freeKey, String.valueOf(capacity));
+            }
+
+            occupancyLoggingService.logCurrentOccupancy();
 
             log.info("Handled {} -> free={}", type, redis.opsForValue().get(freeKey));
 
@@ -53,4 +66,3 @@ public class ParkingEventConsumer {
         }
     }
 }
-

@@ -1,42 +1,95 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Smart Parking System</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h2 { margin-top: 30px; }
-        input, button { padding: 5px; margin: 5px; }
-        #output { margin-top: 20px; white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background: #f9f9f9; max-height: 300px; overflow-y: auto; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Parking Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Smart Parking System</h1>
-    <h2>Stanje parkirališta</h2>
-	<div>
-	  <span>Slobodna mjesta:</span> <b><span id="free">?</span></b><br>
-	  <span>Kapacitet:</span> <span id="capacity">?</span><br>
-	  <span>Zauzeto:</span> <span id="occupied">?</span>
-	</div>
 
-    <h2>Ulaz u parking</h2>
-    <button onclick="generateTicket()">Generiraj kartu</button>
-    <div>UUID generirane karte: <span id="generatedUuid">-</span></div>
+<div class="layout">
 
-    <h2>Izlaz iz parkinga</h2>
-    <input type="text" id="exitUuid" placeholder="UUID karte za izlazak">
-    <button onclick="exitParking()">Izlaz</button>
+    <main class="main-content">
 
-    <h2>Dohvat svih karata (admin)</h2>
-    <button onclick="getAllTickets()">Dohvati sve karte</button>
+        <header class="topbar">
+            <div>
+                <h1>Smart Parking Admin Dashboard</h1>
+                <p>Current occupancy monitoring and next-hour XGBoost high-occupancy forecast for LOT_A</p>
+                <span class="refresh-info">Auto refresh every 10 seconds</span>
+            </div>
 
-    <h2>Dohvat karte po UUID-u</h2>
-    <input type="text" id="searchUuid" placeholder="UUID karte">
-    <button onclick="getTicketByUuid()">Dohvati kartu</button>
+            <button id="refreshBtn">Refresh Now</button>
+        </header>
 
-    <h2>Rezultati</h2>
-    <div id="output">Prikaz rezultata</div>
+        <section class="overview-grid">
 
-    <script src="app.js" ></script>
+            <div class="overview-card">
+                <span>Total Capacity</span>
+                <h2 id="capacity">0</h2>
+            </div>
+
+            <div class="overview-card">
+                <span>Occupied</span>
+                <h2 id="occupied">0</h2>
+            </div>
+
+            <div class="overview-card">
+                <span>Free Spots</span>
+                <h2 id="free">0</h2>
+            </div>
+
+            <div class="overview-card status-card">
+                <span>Forecast Model</span>
+                <h2 id="activeModel">xgboost</h2>
+            </div>
+
+        </section>
+
+        <section class="forecast-events-section">
+            <div class="dashboard-panel forecast-panel">
+                <h2 class="section-title">LOT_A Next-Hour Forecast</h2>
+            <div class="lot-grid" id="lotGrid"></div>
+            </div>
+
+            <div class="dashboard-panel events-panel">
+                <h2 class="section-title">Manual Parking Events</h2>
+
+                <div class="sim-controls">
+                    <button onclick="generateTicket()">ENTRY</button>
+                    <button onclick="simulateExit()">EXIT</button>
+                </div>
+
+                <div class="log-box compact-log" id="eventLog"></div>
+            </div>
+
+        </section>
+
+        <section class="services-section">
+            <h2 class="section-title">System Status</h2>
+
+            <div class="service-grid">
+                <div class="service-card">
+                    <span>Backend API</span>
+                    <div id="backendStatus" class="status-pill">Checking...</div>
+                </div>
+
+                <div class="service-card">
+                    <span>ML Service</span>
+                    <div id="mlStatus" class="status-pill">Checking...</div>
+                </div>
+
+                <div class="service-card">
+                    <span>Redis Cache</span>
+                    <div id="redisStatus" class="status-pill">Connected</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
